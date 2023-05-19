@@ -1,33 +1,38 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
-const galleryEl= document.querySelector(".gallery");
-const imgCard = createImgCard(galleryItems);
-
-galleryEl.insertAdjacentHTML ("beforeend", imgCard);
-
-galleryEl.addEventListener("click", onImgOriginalCard);
-
-function createImgCard(galleryItems) {
-    return galleryItems.map(({preview, original, description}) => {
-        return `
-    <li class = "gallery__items">
-        <a class = "gallery__link" href = "${original}">
-            <img 
-                class = "gallery__image" 
-                src = "${preview}"
-                data-source = "${original}"
-                alt = "${description}"
+const container = document.querySelector('.gallery');
+const markup = galleryItems.map(({preview, original, description}) =>
+    `<li class = "gallery__items">
+        <a class = "gallery__link js-target" href="${original}">
+            <img date-image-description="${description}"
+                class = "gallery__image js-target" 
+                src="${preview}"
+                data-source="${original}"
+                alt="${description}" width=100%
             />
         </a>
     </li>`
-    }).join("");
-}
+    );
 
-function onImgOriginalCard(event) {
-    event.preventDefault()
-    if(!event.target.classList.contains("gallery__image")) {
-        return;
+container.insertAdjacentHTML ('beforeend', markup.join(''));
+container.addEventListener("click", onclick);
+
+function onclick(evt) {
+    evt.preventDefault();
+    const isImgEl = evt.target.classList.contains("gallery__image");
+    if (!isImgEl) {
+      return;
     }
-    console.log(event.target)
-}
+
+    const instance = basicLightbox.create(
+        `<img src="${evt.target.dataset.source}" width="800" height="600">`
+      );
+      instance.show();
+      
+      if (evt.code === "Escape") {
+        instance.close();
+      };
+};
+  
+    
